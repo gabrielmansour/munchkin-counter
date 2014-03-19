@@ -9,13 +9,15 @@
     ol, body { margin : 0; padding: 0; }
     li { background: #c00; height: 3em; list-style: none; padding: 0.2em 0.5em; clear: both; border-bottom: 1px solid rgba(216, 216,216,0.8); -webkit-transition: background 300ms, opacity 200ms; }
     li:odd { background: #008; }
-    li span, .delete { float: right; vertical-align: middle; margin-top: 1em; } 
+    li span, .delete { float: right; vertical-align: middle;  } 
+    span { font-size: 1.5em; line-height: 2em }
     .winner { background: lime; }
     .winner span { display: none; }
     .winner h2:after { content: " Winner!"; font-size: 0.5em; color: white;text-transform: uppercase; }
     .loser { opacity: 0.5 }
     #add-player { display: none; }
    menu { box-sizing: border-box;background: #ccf; padding: 0.5em;margin:0; position: absolute; bottom: 0; left: 0; width: 100%; }
+   .delete, input { margin-top: 1em }
   </style>
 </head>
 <body>
@@ -35,7 +37,7 @@
     <span>
       <button class="lvldn">-</button>
       <b><%= player.get('level') %></b>
-      <button class="lvlup">+</butoton>
+      <button class="lvlup">+</button>
     </span>
     <% } %>
   </script>
