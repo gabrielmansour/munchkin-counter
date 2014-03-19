@@ -25,7 +25,7 @@
   
   <menu>
     <button id="edit-players">Edit Players</button>
-    <button id="add-player">Add Player</button>
+    <button id="add-player">+ Add Player</button>
   </menu>
     
   <script type="text/template" id="player">
@@ -51,8 +51,8 @@ var AppView = Backbone.View.extend({
   el: 'body',
   $list: this.$('#players'),
   events: {
-    'click #add-player' : 'addPlayer',
     'click #edit-players' : 'editPlayers',
+    'click #add-player' : 'addPlayer'
   },
   initialize: function(){
     var self = this;
@@ -87,7 +87,7 @@ var PlayerView = Backbone.View.extend({
   tagName: 'li',
   template: _.template( $("#player").html() ),
   events: {
-    'keyup input' : 'updateName',
+    'change input' : 'updateName',
     'click .lvlup': 'levelUp',
     'click .lvldn': 'levelDown',
     'click .delete': 'destroy'
@@ -105,8 +105,8 @@ var PlayerView = Backbone.View.extend({
   levelUp: function(){
     this.model.levelUp();
     if ( this.model.isWinner() ){
-      this.el.classList.add('winner');
-      appView.$('li').not(this.el).addClass('loser');
+      this.$el.addClass('winner')
+        .siblings().addClass('loser').find('button').hide();
     }
   },
   levelDown: function(){
@@ -126,15 +126,13 @@ var Player = Backbone.Model.extend({
     bonus: 0,
     isEditing: AppView.isEditing
   },
-  maxLevel: 10,
   minLevel: 1,
-  isEditing: function(){
-    return AppView.isEditing;
-  },
+  maxLevel: 10,
   levelUp: function(){ this.set('level', Math.min(this.maxLevel, this.get('level') + 1)); },
   levelDown: function(){ this.set('level', Math.max(this.minLevel, this.get('level') - 1)); },
   isWinner: function(){ return this.get('level') >= this.maxLevel; },
-  isAtMinLevel: function(){ return this.get('level') <= this.minLevel; }
+  isAtMinLevel: function(){ return this.get('level') <= this.minLevel; },
+  isEditing: function(){ return AppView.isEditing; }
 });
 
 var PlayerCollection = Backbone.Collection.extend({
