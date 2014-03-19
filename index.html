@@ -100,14 +100,14 @@ var PlayerView = Backbone.View.extend({
   updateName: function(event){
     this.model.set('name', event.target.value);
   },
-  levelUp: function(event){
+  levelUp: function(){
     this.model.levelUp();
     if ( this.model.isWinner() ){
-      event.delegateTarget.classList.add('winner');
+      this.el.classList.add('winner');
       appView.$('li').not(this.el).addClass('loser');
     }
   },
-  levelDown: function(event){
+  levelDown: function(){
     this.model.levelDown();
   },
   render: function(){
