@@ -10,7 +10,7 @@
     ol, body { margin : 0; padding: 0; }
     li { background: #c00; height: 3em; list-style: none; padding: 0.2em 0.5em; clear: both; border-bottom: 1px solid rgba(216, 216,216,0.8); -webkit-transition: background 300ms, opacity 200ms; }
     li:odd { background: #008; }
-    li span, .delete { float: right; vertical-align: middle;  } 
+    li span, .delete, #toggle-die { float: right; vertical-align: middle; }
     span { font-size: 1.5em; line-height: 2em }
     .winner { background: lime; }
     .winner span { display: none; }
@@ -19,14 +19,32 @@
     #add-player { display: none; }
    menu { box-sizing: border-box;background: #ccf; padding: 0.5em;margin:0; position: absolute; bottom: 0; left: 0; width: 100%; }
    .delete, input { margin-top: 1em }
+
+  #dice {
+    display: none;
+    font-size: 6em;
+    border-radius: 20%;
+    border: 2px solid #333;
+    padding: 0.5em;
+    width: 1em;
+    height: 1em;
+    text-align: center;
+    background-color: #fff;
+    margin: 1em auto;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #dice.rolling { opacity: 0.4; }
   </style>
 </head>
 <body>
   <ol id="players">Loading...</ol>
+  <div id="dice">*</div>
   
   <menu>
     <button id="edit-players">Edit Players</button>
     <button id="add-player">+ Add Player</button>
+    <button id="toggle-die">Dice</button>
   </menu>
     
   <script type="text/template" id="player">
@@ -53,10 +71,12 @@ var AppView = Backbone.View.extend({
   $list: this.$('#players'),
   events: {
     'click #edit-players' : 'editPlayers',
-    'click #add-player' : 'addPlayer'
+    'click #add-player' : 'addPlayer',
+    'click #toggle-die' : 'toggleDie'
   },
   initialize: function(){
     var self = this;
+    this.diceView = new DiceView();
     this.collection = new PlayerCollection();
     this.render();
     this.listenTo(this.collection, 'add remove', this.render);
@@ -72,6 +92,9 @@ var AppView = Backbone.View.extend({
   },
   addPlayer: function(){
     this.collection.push(new Player({name: "Player " + (this.collection.length + 1)}));
+  },
+  toggleDie: function(){
+    $('#dice, #players').toggle();
   },
   render: function(){
     var self = this;
@@ -142,6 +165,47 @@ var PlayerCollection = Backbone.Collection.extend({
     for (var i=1;i<=3;i++){
       this.push(new Player({name: "Player " + i}));
     }
+  }
+});
+
+var Dice = Backbone.Model.extend({
+  // only changes value once
+  roll: function(){
+    this.set('value', this.getRandomValue());
+  },
+  getRandomValue: function(){
+    return Math.ceil(Math.random() * 6);
+  }
+});
+
+var DiceView = Backbone.View.extend({
+  el: '#dice',
+  ROLLING_CLASSNAME: 'rolling',
+  events: {
+    'click' : 'roll'
+  },
+  initialize: function(){
+    this.model = new Dice();
+    this.listenTo(this.model, 'change', this.render);
+  },
+
+  roll: function(){
+    this.$el.addClass(this.ROLLING_CLASSNAME);
+    for (var i = 1, timeout, d = 50, self = this; i <= d; i++){
+      timeout = i * i;
+      setTimeout((function(n){
+        return function() {
+          self.model.roll();
+          if (n==d){
+            self.$el.removeClass(self.ROLLING_CLASSNAME);
+          }
+        };
+      }(i)), timeout);
+    }
+  },
+  render: function(){
+    this.el.innerHTML = this.model.get('value');
+    return this;
   }
 });
 
