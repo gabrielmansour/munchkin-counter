@@ -6,36 +6,40 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
   <title>Munchkin Scorecard</title>
   <style type='text/css'>
-    body { font-family: "Helvetica Neue", "Open Sans", Arial, Helvetica, sans-serif; }
-    h2 { display: inline; font-size: 1.5em; line-height: 2em; font-weight: normal; }
+    body { font-family: "Helvetica Neue", "Open Sans", Arial, Helvetica, sans-serif; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none }
+    h2 { display: inline; line-height: 2em; font-weight: normal; }
     ol, body { margin : 0; padding: 0; }
-    li { background: #c00; height: 3em; list-style: none; padding: 0.2em 0.5em; clear: both; border-bottom: 1px solid rgba(216, 216,216,0.8); -webkit-transition: background 300ms, opacity 200ms; }
+    li { background: #c00; height: 3em; list-style: none; padding: 0.2em 0.5em; clear: both; border-bottom: 1px solid rgba(216, 216,216,0.8); -webkit-transition: background 300ms, opacity 200ms; position: relative; }
     li:odd { background: #008; }
-    li span, .delete, #toggle-die { float: right; vertical-align: middle; }
-    span { font-size: 1.5em; line-height: 2em }
+    li b { padding: 0 1em; }
+    li span, .delete, #toggle-die { float: right; vertical-align: middle; position: absolute; right: 0; top: 0; }
+    span { font-size: 1.5em; line-height: 2em; height: 100%; }
     .winner { background: lime; }
     .winner span { display: none; }
     .winner h2:after { content: " Winner!"; font-size: 0.5em; color: white;text-transform: uppercase; }
     .loser { opacity: 0.5 }
     #add-player { display: none; }
-   menu { box-sizing: border-box;background: #ccf; padding: 0.5em;margin:0; position: absolute; bottom: 0; left: 0; width: 100%; }
-   .delete, input { margin-top: 1em }
+    menu { box-sizing: border-box; background: #ccf; height: 3em; padding: 0; margin:0; position: absolute; bottom: 0; left: 0; width: 100%; }
 
-  #dice {
-    display: none;
-    font-size: 6em;
-    border-radius: 20%;
-    border: 2px solid #333;
-    padding: 0.5em;
-    width: 1em;
-    height: 1em;
-    text-align: center;
-    background-color: #fff;
-    margin: 0.75em auto;
-    cursor: pointer;
-    line-height: 1;
-  }
-  #dice.rolling { opacity: 0.4; }
+    input, button { box-sizing: border-box; font: inherit; min-width: 2em; height: 100%; line-height: 200%; background-color: rgb(255,255,255); border: 2px solid rgba(0,0,0,0.8); }
+    button { margin: 0; background-color: rgba(255,255,255,0.4); border: 0; cursor: pointer; }
+    h2, input { font-size: 1.5em; }
+
+    #dice {
+      display: none;
+      font-size: 6em;
+      border-radius: 20%;
+      border: 2px solid #333;
+      padding: 0.5em;
+      width: 1em;
+      height: 1em;
+      text-align: center;
+      background-color: #fff;
+      margin: 0.75em auto;
+      cursor: pointer;
+      line-height: 1;
+    }
+    #dice.rolling { opacity: 0.4; }
   </style>
 </head>
 <body>
