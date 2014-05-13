@@ -25,26 +25,24 @@
     button { margin: 0; background-color: rgba(255,255,255,0.4); border: 0; cursor: pointer; }
     h2, input { font-size: 1.5em; }
 
+    canvas { display: block; width: 192px; height: 192px; }
     #dice {
       display: none;
       font-size: 6em;
       border-radius: 20%;
       border: 2px solid #333;
-      padding: 0.5em;
-      width: 1em;
-      height: 1em;
       text-align: center;
       background-color: #fff;
       margin: 0.75em auto;
       cursor: pointer;
       line-height: 1;
     }
-    #dice.rolling { opacity: 0.4; }
+    #dice.rolling { opacity: 0.6; -webkit-transform: rotate(1080deg); -webkit-transition: -webkit-transform 2300ms ease-out; }
   </style>
 </head>
 <body>
   <ol id="players">Loading...</ol>
-  <div id="dice">*</div>
+  <canvas id="dice">*</canvas>
   
   <menu>
     <button id="edit-players">Edit Players</button>
@@ -174,6 +172,7 @@ var PlayerCollection = Backbone.Collection.extend({
 });
 
 var Dice = Backbone.Model.extend({
+  defaults: { value: 5 },
   // only changes value once
   roll: function(){
     this.set('value', this.getRandomValue());
@@ -190,8 +189,77 @@ var DiceView = Backbone.View.extend({
     'click' : 'roll'
   },
   initialize: function(){
+    this.el.setAttribute('width', 192);
+    this.el.setAttribute('height', 192);
+    this.context = this.el.getContext('2d');
+
+    this.radius = this.el.width / 10;
     this.model = new Dice();
-    this.listenTo(this.model, 'change', this.render);
+    this.listenTo(this.model, 'change:value', this.render);
+    this.render();
+  },
+
+  getDotPositions: function(){
+    var value = this.model.get('value'), dots = [];
+    /*
+       Dot positions:
+        /---------\
+        | 0  1  2 |
+        | 3  4  5 |
+        | 6  7  8 |
+        \---------/
+    */
+
+    function dot(){
+      for (var i=0,a=arguments,l=a.length; i<l; i++)
+        dots.push(a[i]);
+      dots = dots.sort();
+    }
+
+    if (value % 2)
+      dot(4);
+    if (value > 1)
+      dot(2, 6);
+    if (value >= 4)
+      dot(0, 8);
+    if (value == 6)
+      dot(3, 5);
+
+    return dots;
+  },
+
+  drawDot: function(position, clearDot){
+    var width = this.el.width, height = this.el.height,
+        col = position % 3,
+        x = 0, y = 0, col;
+
+    if (position < 3)
+      y = 0.2;
+    else if (position < 6)
+      y = 0.5;
+    else
+      y = 0.8;
+
+    if (col == 0)
+      x = 0.2;
+    else if (col == 1)
+      x = 0.5;
+    else if (col == 2)
+      x = 0.8;
+
+    if (!clearDot) {
+      this.context.beginPath();
+      this.context.arc(x * width, y * width, this.radius, 0, 2 * Math.PI, false);
+      this.context.fillStyle = '#333';
+      this.context.fill();
+    } else {
+      // expand clearing area because edges of dots still show when using radius as width
+      this.context.clearRect(x * width - this.radius * 2, y * width - this.radius * 2, this.radius * 4, this.radius * 4);
+    }
+  },
+
+  clearDot: function(position){
+    return this.drawDot(position, true);
   },
 
   roll: function(){
@@ -208,8 +276,15 @@ var DiceView = Backbone.View.extend({
       }(i)), timeout);
     }
   },
+
   render: function(){
-    this.el.innerHTML = this.model.get('value');
+    for (var position=0, positions = this.getDotPositions(); position < 9; position++) {
+      if ($.inArray(position, positions) > -1) {
+        this.drawDot(position);
+      } else {
+        this.clearDot(position);
+      }
+    }
     return this;
   }
 });
