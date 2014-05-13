@@ -196,6 +196,7 @@ var DiceView = Backbone.View.extend({
     this.radius = this.el.width / 10;
     this.model = new Dice();
     this.listenTo(this.model, 'change:value', this.render);
+    this.listenTo(this.model, 'change:isRolling', this.toggleRollingClass);
     this.render();
   },
 
@@ -263,18 +264,24 @@ var DiceView = Backbone.View.extend({
   },
 
   roll: function(){
-    this.$el.addClass(this.ROLLING_CLASSNAME);
+    if (this.model.get('isRolling')) return;
+
+    this.model.set('isRolling', true);
     for (var i = 1, timeout, d = 50, self = this; i <= d; i++){
       timeout = i * i;
       setTimeout((function(n){
         return function() {
           self.model.roll();
           if (n==d){
-            self.$el.removeClass(self.ROLLING_CLASSNAME);
+            self.model.set('isRolling', false);
           }
         };
       }(i)), timeout);
     }
+  },
+
+  toggleRollingClass: function(){
+    this.$el.toggleClass(this.ROLLING_CLASSNAME, this.model.get('isRolling'));
   },
 
   render: function(){
