@@ -256,7 +256,7 @@ var DiceView = Backbone.View.extend({
       this.context.fill();
     } else {
       // expand clearing area because edges of dots still show when using radius as width
-      this.context.clearRect(x * width - this.radius * 2, y * width - this.radius * 2, this.radius * 4, this.radius * 4);
+      this.context.clearRect(x * width - this.radius * 1.1, y * width - this.radius * 1.1, this.radius * 2.2, this.radius * 2.2);
     }
   },
 
