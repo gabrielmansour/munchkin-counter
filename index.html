@@ -187,6 +187,7 @@ var DiceView = Backbone.View.extend({
   el: '#dice',
   ROLLING_CLASSNAME: 'rolling',
   events: {
+    'touchstart' : 'roll',
     'mousedown' : 'roll'
   },
   initialize: function(){
