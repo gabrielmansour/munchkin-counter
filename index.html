@@ -270,16 +270,14 @@ var DiceView = Backbone.View.extend({
     if (this.model.get('isRolling')) return;
 
     this.model.set('isRolling', true);
-    for (var i = 1, timeout, d = 50, self = this; i <= d; i++){
+    for (var i = 1, timeout, d = 50; i <= d; i++){
       timeout = i * i;
-      setTimeout((function(n){
-        return function() {
-          self.model.roll();
-          if (n==d){
-            self.model.set('isRolling', false);
-          }
-        };
-      }(i)), timeout);
+      setTimeout((function(i){
+        this.model.roll();
+        if (i==d){
+          this.model.set('isRolling', false);
+        }
+      }.bind(this, i)), timeout);
     }
   },
 
